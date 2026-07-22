@@ -55,6 +55,49 @@ beforeEach(() => {
 
 const { h } = window;
 
+describe("contextMenu element on mobile", () => {
+  beforeEach(async () => {
+    unmountComponent();
+    await render(
+      <Excalidraw
+        handleKeyboardGlobally={true}
+        UIOptions={{ getFormFactor: () => "phone" }}
+      />,
+    );
+    fireEvent.resize(window);
+    await waitFor(() => expect(h.app.editorInterface.formFactor).toBe("phone"));
+  });
+
+  afterEach(() => {
+    unmountComponent();
+  });
+
+  it("shows layer actions in context menu", () => {
+    UI.clickTool("rectangle");
+    mouse.down(0, 0);
+    mouse.up(10, 10);
+
+    fireEvent.contextMenu(GlobalTestState.interactiveCanvas, {
+      button: 2,
+      clientX: 3,
+      clientY: 3,
+    });
+
+    const contextMenu = UI.queryContextMenu();
+    const expectedLayerActions: ActionName[] = [
+      "sendBackward",
+      "bringForward",
+      "sendToBack",
+      "bringToFront",
+    ];
+
+    expect(contextMenu).not.toBeNull();
+    expectedLayerActions.forEach((item) => {
+      expect(contextMenu?.querySelector(`li[data-testid="${item}"]`)).not.toBeNull();
+    });
+  });
+});
+
 describe("contextMenu element", () => {
   beforeEach(async () => {
     localStorage.clear();

@@ -101,6 +101,8 @@
     "addLayer": "Add layer",
     "hideLayer": "Hide layer",
     "showLayer": "Show layer",
+    "lockLayer": "Lock layer",
+    "unlockLayer": "Unlock layer",
     "noLayersYet": "No layers yet",
     "deleteLayer": "Delete layer",
     "renameLayer": "Rename layer",

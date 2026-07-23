@@ -1,4 +1,8 @@
-import { isElementInVisibleLayer, getElementLayer } from "../src/layer";
+import {
+  isElementInVisibleLayer,
+  getElementLayer,
+  isElementLocked,
+} from "../src/layer";
 
 import type { ExcalidrawElement, Layer } from "../src/types";
 
@@ -97,6 +101,35 @@ describe("isElementInVisibleLayer", () => {
 
       expect(isElementInVisibleLayer(element, layers)).toBe(true);
     });
+  });
+});
+
+describe("isElementLocked", () => {
+  it("should return true when element is on a locked layer", () => {
+    const element = createMockElement("layer-1");
+    const layers = createMockLayers([
+      { id: "layer-1", visible: true, order: 1 },
+    ]);
+
+    expect(isElementLocked(element, [{ ...layers[0], locked: true }])).toBe(true);
+  });
+
+  it("should return true when element itself is locked", () => {
+    const element = createMockElement("layer-1");
+    const layers = createMockLayers([
+      { id: "layer-1", visible: true, order: 1 },
+    ]);
+
+    expect(isElementLocked({ ...element, locked: true }, layers)).toBe(true);
+  });
+
+  it("should return false when element is on an unlocked layer", () => {
+    const element = createMockElement("layer-1");
+    const layers = createMockLayers([
+      { id: "layer-1", visible: true, order: 1 },
+    ]);
+
+    expect(isElementLocked(element, layers)).toBe(false);
   });
 });
 

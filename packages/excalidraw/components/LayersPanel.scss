@@ -126,7 +126,8 @@
     }
   }
 
-  .layer-ui__layers-visibility-toggle {
+  .layer-ui__layers-visibility-toggle,
+  .layer-ui__layers-lock-toggle {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -147,6 +148,14 @@
     svg {
       width: 1rem;
       height: 1rem;
+    }
+  }
+
+  .layer-ui__layers-lock-toggle--locked {
+    color: var(--color-danger);
+
+    &:hover {
+      background-color: var(--color-danger-bg, rgba(255, 107, 107, 0.12));
     }
   }
 

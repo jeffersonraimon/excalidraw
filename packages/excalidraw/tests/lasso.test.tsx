@@ -74,6 +74,7 @@ const updatePath = (startPoint: GlobalPoint, points: LocalPoint[]) => {
       elementsSegments,
       intersectedElements: new Set(),
       enclosedElements: new Set(),
+      layers: h.state.layers,
     });
 
     act(() =>

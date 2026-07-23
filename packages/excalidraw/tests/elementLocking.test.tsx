@@ -6,7 +6,7 @@ import { Excalidraw } from "../index";
 
 import { API } from "../tests/helpers/api";
 import { Keyboard, Pointer, UI } from "../tests/helpers/ui";
-import { render, unmountComponent } from "../tests/test-utils";
+import { act, render, unmountComponent } from "../tests/test-utils";
 
 import { getTextEditor } from "./queries/dom";
 
@@ -19,6 +19,29 @@ describe("element locking", () => {
   beforeEach(async () => {
     await render(<Excalidraw handleKeyboardGlobally={true} />);
     API.setElements([]);
+  });
+
+  it("should not create new elements when the active layer is locked", () => {
+    act(() => {
+      h.setState({
+        layers: [
+          ...h.state.layers,
+          {
+            id: "locked-layer",
+            name: "Locked Layer",
+            order: 10,
+            visible: true,
+            locked: true,
+          },
+        ],
+        activeLayerId: "locked-layer",
+      });
+    });
+
+    UI.clickTool("rectangle");
+    mouse.clickAt(50, 50);
+
+    expect(h.elements).toHaveLength(0);
   });
 
   it("click-selecting a locked element is disabled", () => {

@@ -13,6 +13,7 @@ import {
   isFreeDrawElement,
   isLineElement,
   isPointInElement,
+  isElementLocked,
 } from "@excalidraw/element";
 import {
   lineSegment,
@@ -99,7 +100,7 @@ export class EraserTrail extends AnimatedTrail {
     );
 
     const candidateElements = this.app.visibleElements.filter(
-      (el) => !el.locked,
+      (el) => !isElementLocked(el, this.app.state.layers),
     );
 
     const candidateElementsMap = arrayToMap(candidateElements);

@@ -23,6 +23,8 @@ import {
   TrashIcon,
   chevronUpIcon,
   chevronDownIcon,
+  LockedIcon,
+  UnlockedIcon,
 } from "./icons";
 
 import "./LayersPanel.scss";
@@ -113,6 +115,7 @@ const LayerItem = memo(
     elementCount,
     onSelect,
     onToggleVisibility,
+    onToggleLock,
     onRename,
     onDelete,
     onMoveUp,
@@ -128,6 +131,7 @@ const LayerItem = memo(
     elementCount: number;
     onSelect: (e: React.MouseEvent) => void;
     onToggleVisibility: () => void;
+    onToggleLock: () => void;
     onRename: (newName: string) => void;
     onDelete: () => void;
     onMoveUp: () => void;
@@ -151,6 +155,20 @@ const LayerItem = memo(
           title={layer.visible ? t("labels.hideLayer") : t("labels.showLayer")}
         >
           {layer.visible ? eyeIcon : eyeClosedIcon}
+        </button>
+
+        <button
+          className={clsx("layer-ui__layers-lock-toggle", {
+            "layer-ui__layers-lock-toggle--locked": layer.locked,
+          })}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleLock();
+          }}
+          title={layer.locked ? t("labels.unlockLayer") : t("labels.lockLayer")}
+          aria-pressed={layer.locked}
+        >
+          {layer.locked ? LockedIcon : UnlockedIcon}
         </button>
 
         <EditableLayerName name={layer.name} onRename={onRename} />
@@ -347,6 +365,16 @@ export const LayersPanel = memo(() => {
     (layerId: LayerId) => {
       const updatedLayers = layers.map((layer) =>
         layer.id === layerId ? { ...layer, visible: !layer.visible } : layer,
+      );
+      setAppState({ layers: updatedLayers });
+    },
+    [layers, setAppState],
+  );
+
+  const handleToggleLock = useCallback(
+    (layerId: LayerId) => {
+      const updatedLayers = layers.map((layer) =>
+        layer.id === layerId ? { ...layer, locked: !layer.locked } : layer,
       );
       setAppState({ layers: updatedLayers });
     },
@@ -567,6 +595,7 @@ export const LayersPanel = memo(() => {
                 elementCount={counts.total}
                 onSelect={(e) => handleSelectLayer(layer.id, e)}
                 onToggleVisibility={() => handleToggleVisibility(layer.id)}
+                onToggleLock={() => handleToggleLock(layer.id)}
                 onRename={(newName) => handleRenameLayer(layer.id, newName)}
                 onDelete={() => handleDeleteLayer(layer.id)}
                 onMoveUp={() => handleMoveLayerUp(layer.id)}

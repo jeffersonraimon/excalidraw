@@ -14,10 +14,15 @@ import {
   getBoundTextElement,
   getElementBounds,
   intersectElementWithLineSegment,
+  isElementLocked,
 } from "@excalidraw/element";
 
 import type { ElementsSegmentsMap, GlobalPoint } from "@excalidraw/math/types";
-import type { ElementsMap, ExcalidrawElement } from "@excalidraw/element/types";
+import type {
+  ElementsMap,
+  ExcalidrawElement,
+  Layer,
+} from "@excalidraw/element/types";
 
 export const getLassoSelectedElementIds = (input: {
   lassoPath: GlobalPoint[];
@@ -26,6 +31,7 @@ export const getLassoSelectedElementIds = (input: {
   elementsSegments: ElementsSegmentsMap;
   intersectedElements: Set<ExcalidrawElement["id"]>;
   enclosedElements: Set<ExcalidrawElement["id"]>;
+  layers: readonly Layer[];
   simplifyDistance?: number;
 }): {
   selectedElementIds: string[];
@@ -37,6 +43,7 @@ export const getLassoSelectedElementIds = (input: {
     elementsSegments,
     intersectedElements,
     enclosedElements,
+    layers,
     simplifyDistance,
   } = input;
   // simplify the path to reduce the number of points
@@ -44,7 +51,9 @@ export const getLassoSelectedElementIds = (input: {
   if (simplifyDistance) {
     path = simplify(lassoPath, simplifyDistance) as GlobalPoint[];
   }
-  const unlockedElements = elements.filter((el) => !el.locked);
+  const unlockedElements = elements.filter(
+    (el) => !isElementLocked(el, layers),
+  );
   // as the path might not enclose a shape anymore, clear before checking
   enclosedElements.clear();
   intersectedElements.clear();

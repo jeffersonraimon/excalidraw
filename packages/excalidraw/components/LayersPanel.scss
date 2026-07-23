@@ -126,7 +126,8 @@
     }
   }
 
-  .layer-ui__layers-visibility-toggle {
+  .layer-ui__layers-visibility-toggle,
+  .layer-ui__layers-lock-toggle {
     display: flex;
     align-items: center;
     justify-content: center;

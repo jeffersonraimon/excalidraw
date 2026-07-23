@@ -229,6 +229,7 @@ import {
   dragSelectedElements,
   getDragOffsetXY,
   isElementInVisibleLayer,
+  isElementLocked,
   Scene,
   Store,
   CaptureUpdateAction,
@@ -6499,7 +6500,7 @@ class App extends React.Component<AppProps, AppState> {
             .getNonDeletedElements()
             .filter(
               (element) =>
-                (opts?.includeLockedElements || !element.locked) &&
+                (opts?.includeLockedElements || !isElementLocked(element, this.state.layers)) &&
                 (opts?.includeBoundTextElement ||
                   !(isTextElement(element) && element.containerId)) &&
                 isElementInVisibleLayer(element, this.state.layers),
@@ -11244,7 +11245,9 @@ class App extends React.Component<AppProps, AppState> {
               ...(shouldReuseSelection && prevState.selectedElementIds),
               ...elementsWithinSelection.reduce(
                 (acc: Record<ExcalidrawElement["id"], true>, element) => {
-                  acc[element.id] = true;
+                  if (!isElementLocked(element, this.state.layers)) {
+                    acc[element.id] = true;
+                  }
                   return acc;
                 },
                 {},

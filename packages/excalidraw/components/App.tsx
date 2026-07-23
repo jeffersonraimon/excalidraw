@@ -5031,6 +5031,14 @@ class App extends React.Component<AppProps, AppState> {
     });
   };
 
+  private isActiveLayerLocked = (): boolean => {
+    const activeLayer = this.state.layers.find(
+      (layer) => layer.id === this.state.activeLayerId,
+    );
+
+    return activeLayer?.locked ?? false;
+  };
+
   updateFrameRendering = (
     opts:
       | Partial<AppState["frameRendering"]>
@@ -7505,6 +7513,16 @@ class App extends React.Component<AppProps, AppState> {
       return;
     }
 
+    if (
+      elements.some((element) => {
+        const layerId = element.layerId ?? this.state.activeLayerId;
+        const layer = this.state.layers.find((layer) => layer.id === layerId);
+        return layer?.locked ?? false;
+      })
+    ) {
+      return;
+    }
+
     const chunkedElements: ExcalidrawElement[][] = [];
 
     for (const element of elements) {
@@ -8666,17 +8684,29 @@ class App extends React.Component<AppProps, AppState> {
         pointerDownState.hit.wasAddedToSelection = true;
       }
     } else if (this.state.activeTool.type === "text") {
+      if (this.isActiveLayerLocked()) {
+        this.cursor.set("not-allowed");
+        return;
+      }
       this.handleTextOnPointerDown(event, pointerDownState);
     } else if (
       this.state.activeTool.type === "arrow" ||
       this.state.activeTool.type === "line"
     ) {
+      if (this.isActiveLayerLocked()) {
+        this.cursor.set("not-allowed");
+        return;
+      }
       this.handleLinearElementOnPointerDown(
         event,
         this.state.activeTool.type,
         pointerDownState,
       );
     } else if (this.state.activeTool.type === "freedraw") {
+      if (this.isActiveLayerLocked()) {
+        this.cursor.set("not-allowed");
+        return;
+      }
       this.handleFreeDrawElementOnPointerDown(
         event,
         this.state.activeTool.type,
@@ -8688,6 +8718,10 @@ class App extends React.Component<AppProps, AppState> {
       this.state.activeTool.type === TOOL_TYPE.frame ||
       this.state.activeTool.type === TOOL_TYPE.magicframe
     ) {
+      if (this.isActiveLayerLocked()) {
+        this.cursor.set("not-allowed");
+        return;
+      }
       this.createFrameElementOnPointerDown(
         pointerDownState,
         this.state.activeTool.type,
@@ -8698,12 +8732,20 @@ class App extends React.Component<AppProps, AppState> {
         pointerDownState.lastCoords.y,
       );
     } else if (this.state.activeTool.type === "autoshape") {
+      if (this.isActiveLayerLocked()) {
+        this.cursor.set("not-allowed");
+        return;
+      }
       this.drawShape.handlePointerDown(pointerDownState);
     } else if (
       this.state.activeTool.type !== "eraser" &&
       this.state.activeTool.type !== "hand" &&
       this.state.activeTool.type !== "image"
     ) {
+      if (this.isActiveLayerLocked()) {
+        this.cursor.set("not-allowed");
+        return;
+      }
       this.createGenericElementOnPointerDown(
         this.state.activeTool.type,
         pointerDownState,

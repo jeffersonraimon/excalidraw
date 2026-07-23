@@ -151,6 +151,14 @@
     }
   }
 
+  .layer-ui__layers-lock-toggle--locked {
+    color: var(--color-danger);
+
+    &:hover {
+      background-color: var(--color-danger-bg, rgba(255, 107, 107, 0.12));
+    }
+  }
+
   .layer-ui__layers-item-name {
     flex: 1 1 auto;
     font-size: 0.875rem;

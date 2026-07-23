@@ -158,12 +158,15 @@ const LayerItem = memo(
         </button>
 
         <button
-          className="layer-ui__layers-lock-toggle"
+          className={clsx("layer-ui__layers-lock-toggle", {
+            "layer-ui__layers-lock-toggle--locked": layer.locked,
+          })}
           onClick={(e) => {
             e.stopPropagation();
             onToggleLock();
           }}
           title={layer.locked ? t("labels.unlockLayer") : t("labels.lockLayer")}
+          aria-pressed={layer.locked}
         >
           {layer.locked ? LockedIcon : UnlockedIcon}
         </button>
